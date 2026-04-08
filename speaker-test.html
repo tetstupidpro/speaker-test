@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TSP Speaker Test</title>
+</head>
+<body style="text-align:center; font-family:sans-serif;">
+  <h1>TSP Speaker Test</h1>
+
+  <button onclick="playLeft()">LEFT</button>
+  <button onclick="playRight()">RIGHT</button>
+  <button onclick="playStereo()">STEREO</button>
+  <br><br>
+  <button onclick="playBass()">BASS</button>
+  <button onclick="playTreble()">TREBLE</button>
+
+<script>
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, pan=0) {
+  let osc = audioCtx.createOscillator();
+  let gain = audioCtx.createGain();
+  let panner = audioCtx.createStereoPanner();
+
+  osc.frequency.value = freq;
+  panner.pan.value = pan;
+
+  osc.connect(gain);
+  gain.connect(panner);
+  panner.connect(audioCtx.destination);
+
+  osc.start();
+  setTimeout(() => osc.stop(), 1000);
+}
+
+function playLeft() { playTone(1000, -1); }
+function playRight() { playTone(1000, 1); }
+function playStereo() { playTone(1000, 0); }
+function playBass() { playTone(60, 0); }
+function playTreble() { playTone(10000, 0); }
+</script>
+
+</body>
+</html>
