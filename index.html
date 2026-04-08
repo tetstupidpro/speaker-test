@@ -72,6 +72,31 @@
 <script>
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+async function playPannedAudio(file, panValue) {
+  const response = await fetch(file);
+  const arrayBuffer = await response.arrayBuffer();
+  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+  const source = audioCtx.createBufferSource();
+  const panner = audioCtx.createStereoPanner();
+
+  source.buffer = audioBuffer;
+  panner.pan.value = panValue;
+
+  source.connect(panner);
+  panner.connect(audioCtx.destination);
+
+  source.start();
+}
+
+function playLeft() {
+  playPannedAudio('left.mp3', -1); // kiri
+}
+
+function playRight() {
+  playPannedAudio('right.mp3', 1); // kanan
+}
+
 function playTone(freq, pan=0) {
   let osc = audioCtx.createOscillator();
   let gain = audioCtx.createGain();
@@ -88,27 +113,9 @@ function playTone(freq, pan=0) {
   setTimeout(() => osc.stop(), 1000);
 }
 
-function playLeft() {
-  let audio = new Audio('left.mp3');
-  audio.play();
-}
-
-function playRight() {
-  let audio = new Audio('right.mp3');
-  audio.play();
-}
-
-function playStereo() {
-  playTone(1000, 0);
-}
-
-function playBass() {
-  playTone(60, 0);
-}
-
-function playTreble() {
-  playTone(10000, 0);
-}
+function playStereo() { playTone(1000, 0); }
+function playBass() { playTone(60, 0); }
+function playTreble() { playTone(10000, 0); }
 </script>
 
 </body>
