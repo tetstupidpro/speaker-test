@@ -2,16 +2,72 @@
 <html>
 <head>
   <title>TSP Speaker Test</title>
-</head>
-<body style="text-align:center; font-family:sans-serif;">
-  <h1>TSP Speaker Test</h1>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <button onclick="playLeft()">LEFT</button>
-  <button onclick="playRight()">RIGHT</button>
-  <button onclick="playStereo()">STEREO</button>
-  <br><br>
-  <button onclick="playBass()">BASS</button>
-  <button onclick="playTreble()">TREBLE</button>
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 140px;
+      height: 50px;
+      margin: 10px;
+      border: none;
+      border-radius: 12px;
+      background: #22c55e;
+      color: black;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    a {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🔊 TSP Speaker Test</h1>
+
+    <button onclick="playLeft()">LEFT</button>
+    <button onclick="playRight()">RIGHT</button><br>
+
+    <button onclick="playStereo()">STEREO</button><br>
+
+    <button onclick="playBass()">BASS</button>
+    <button onclick="playTreble()">TREBLE</button>
+
+    <div class="footer">
+      <p>Powered by TSP Audio</p>
+      <p>Butuh setup sound system?</p>
+      <a href="https://wa.me/628xxxxxxxxxx">Hubungi Kami</a>
+    </div>
+  </div>
 
 <script>
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -32,11 +88,27 @@ function playTone(freq, pan=0) {
   setTimeout(() => osc.stop(), 1000);
 }
 
-function playLeft() { playTone(1000, -1); }
-function playRight() { playTone(1000, 1); }
-function playStereo() { playTone(1000, 0); }
-function playBass() { playTone(60, 0); }
-function playTreble() { playTone(10000, 0); }
+function playLeft() {
+  let audio = new Audio('left.mp3');
+  audio.play();
+}
+
+function playRight() {
+  let audio = new Audio('right.mp3');
+  audio.play();
+}
+
+function playStereo() {
+  playTone(1000, 0);
+}
+
+function playBass() {
+  playTone(60, 0);
+}
+
+function playTreble() {
+  playTone(10000, 0);
+}
 </script>
 
 </body>
