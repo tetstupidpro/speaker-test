@@ -8,19 +8,36 @@
     body {
       background: #0f172a;
       color: white;
-      font-family: sans-serif;
-      text-align: center;
+      font-family: Arial, sans-serif;
+      margin: 0;
       padding: 20px;
+      text-align: center;
     }
 
     h1 {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #38bdf8;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
     }
 
     button {
-      width: 150px;
-      height: 50px;
-      margin: 10px;
+      height: 55px;
       border: none;
       border-radius: 12px;
       background: #22c55e;
@@ -28,15 +45,19 @@
       font-size: 14px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
     }
 
     button:hover {
       background: #16a34a;
     }
 
-    .container {
-      max-width: 400px;
-      margin: auto;
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .full {
+      grid-column: span 2;
     }
 
     .footer {
@@ -44,69 +65,62 @@
       font-size: 14px;
     }
 
-    a {
-      color: #38bdf8;
-    }
-
-    /* WA FLOAT */
-    .wa-float {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
+    .cta-btn {
+      display: inline-block;
+      margin-top: 15px;
       background: #25D366;
-      border-radius: 50px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
       color: white;
-      font-weight: bold;
+      padding: 14px 22px;
+      border-radius: 10px;
       text-decoration: none;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      z-index: 999;
-      animation: pulse 1.5s infinite;
+      font-weight: bold;
     }
 
-    .wa-float img {
-      width: 24px;
-      height: 24px;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(37,211,102, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(37,211,102, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(37,211,102, 0); }
-    }
   </style>
 </head>
 
 <body>
   <div class="container">
+
     <h1>🔊 TSP Speaker Test</h1>
+    <p>Professional Audio Testing Tool</p>
 
-    <button onclick="playLeft()">LEFT</button>
-    <button onclick="playRight()">RIGHT</button><br>
+    <!-- BASIC -->
+    <h2>🔊 Basic Test</h2>
+    <div class="grid">
+      <button onclick="playLeft()">LEFT</button>
+      <button onclick="playRight()">RIGHT</button>
+      <button class="full" onclick="playStereo()">STEREO</button>
+      <button onclick="playBass()">BASS</button>
+      <button onclick="playTreble()">TREBLE</button>
+    </div>
 
-    <button onclick="playStereo()">STEREO</button><br>
+    <!-- PRO -->
+    <h2>⚙️ Advanced Test</h2>
+    <div class="grid">
+      <button class="full" onclick="playSweep()">SWEEP 20Hz - 20kHz</button>
+      <button onclick="playPinkNoise()">PINK NOISE</button>
+      <button onclick="playPhase()">PHASE TEST</button>
+    </div>
 
-    <button onclick="playBass()">BASS</button>
-    <button onclick="playTreble()">TREBLE</button><br>
-
-    <button onclick="playSweep()">SWEEP</button><br>
-
-    <button onclick="playPinkNoise()">PINK NOISE</button>
-    <button onclick="playPhase()">PHASE</button>
-
+    <!-- FOOTER -->
     <div class="footer">
       <p><b>Need Sound System & Recording Studio Setup?</b></p>
-      <p>Call Us - we are profesional</p>
+      <p>Call Us</p>
+
+      <a class="cta-btn"
+         href="https://wa.me/6287860026049?text=Halo%20TSP%20Audio%20saya%20mau%20konsultasi"
+         target="_blank">
+         💬 Free Consultation
+      </a>
     </div>
+
   </div>
 
 <script>
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// AUDIO FILE PAN (LEFT RIGHT)
+// LEFT RIGHT PAN
 async function playPannedAudio(file, panValue) {
   const response = await fetch(file);
   const arrayBuffer = await response.arrayBuffer();
@@ -124,12 +138,19 @@ async function playPannedAudio(file, panValue) {
   source.start();
 }
 
-function playLeft() {
-  playPannedAudio('left.mp3', -1);
-}
+function playLeft() { playPannedAudio('left.mp3', -1); }
+function playRight() { playPannedAudio('right.mp3', 1); }
 
-function playRight() {
-  playPannedAudio('right.mp3', 1);
+// STEREO FILE
+async function playStereo() {
+  const response = await fetch('stereo.mp3');
+  const arrayBuffer = await response.arrayBuffer();
+  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(audioCtx.destination);
+  source.start();
 }
 
 // BASIC TONE
@@ -149,19 +170,14 @@ function playTone(freq, pan=0) {
   setTimeout(() => osc.stop(), 1000);
 }
 
-function playStereo() {
-  let audio = new Audio('stereo.mp3');
-  audio.play();
-}
-function playBass() { playTone(60, 0); }
-function playTreble() { playTone(10000, 0); }
+function playBass() { playTone(60); }
+function playTreble() { playTone(10000); }
 
 // SWEEP
 function playSweep() {
   let osc = audioCtx.createOscillator();
   let gain = audioCtx.createGain();
 
-  osc.type = "sine";
   osc.frequency.setValueAtTime(20, audioCtx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(20000, audioCtx.currentTime + 5);
 
@@ -210,14 +226,6 @@ function playPhase() {
   setTimeout(() => osc.stop(), 2000);
 }
 </script>
-
-<!-- WA FLOAT -->
-<a class="wa-float" 
-   href="https://wa.me/6287860026049?text=Halo%20TSP%20Audio%20saya%20mau%20konsultasi" 
-   target="_blank">
-  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
-  Chat Admin
-</a>
 
 </body>
 </html>
