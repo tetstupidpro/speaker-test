@@ -18,14 +18,14 @@
     }
 
     button {
-      width: 140px;
+      width: 150px;
       height: 50px;
       margin: 10px;
       border: none;
       border-radius: 12px;
       background: #22c55e;
       color: black;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
     }
@@ -47,6 +47,36 @@
     a {
       color: #38bdf8;
     }
+
+    /* WA FLOAT */
+    .wa-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25D366;
+      border-radius: 50px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 999;
+      animation: pulse 1.5s infinite;
+    }
+
+    .wa-float img {
+      width: 24px;
+      height: 24px;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(37,211,102, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(37,211,102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37,211,102, 0); }
+    }
   </style>
 </head>
 
@@ -60,22 +90,23 @@
     <button onclick="playStereo()">STEREO</button><br>
 
     <button onclick="playBass()">BASS</button>
-    <button onclick="playTreble()">TREBLE</button>
+    <button onclick="playTreble()">TREBLE</button><br>
 
     <button onclick="playSweep()">SWEEP</button><br>
+
     <button onclick="playPinkNoise()">PINK NOISE</button>
-    <button onclick="playPhase()">PHASE TEST</button>
-    
+    <button onclick="playPhase()">PHASE</button>
+
     <div class="footer">
-      <p>Powered by TSP Audio</p>
-      <p>Sound System & Studio Recording ?</p>
-      <a href="https://wa.me/6281234567890?text=Halo%20saya%20mau%20setup%20sound%20system">Call Me</a>
+      <p><b>Sound System & Recording Studio Setup?</b></p>
+      <p>we are profesional</p>
     </div>
   </div>
 
 <script>
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+// AUDIO FILE PAN (LEFT RIGHT)
 async function playPannedAudio(file, panValue) {
   const response = await fetch(file);
   const arrayBuffer = await response.arrayBuffer();
@@ -94,13 +125,14 @@ async function playPannedAudio(file, panValue) {
 }
 
 function playLeft() {
-  playPannedAudio('left.mp3', -1); // kiri
+  playPannedAudio('left.mp3', -1);
 }
 
 function playRight() {
-  playPannedAudio('right.mp3', 1); // kanan
+  playPannedAudio('right.mp3', 1);
 }
 
+// BASIC TONE
 function playTone(freq, pan=0) {
   let osc = audioCtx.createOscillator();
   let gain = audioCtx.createGain();
@@ -120,7 +152,8 @@ function playTone(freq, pan=0) {
 function playStereo() { playTone(1000, 0); }
 function playBass() { playTone(60, 0); }
 function playTreble() { playTone(10000, 0); }
-  // SWEEP 20Hz - 20kHz
+
+// SWEEP
 function playSweep() {
   let osc = audioCtx.createOscillator();
   let gain = audioCtx.createGain();
@@ -152,16 +185,21 @@ function playPinkNoise() {
   setTimeout(() => node.disconnect(), 3000);
 }
 
-// PHASE TEST (L/R kebalik)
+// PHASE
 function playPhase() {
   let osc = audioCtx.createOscillator();
-  let splitter = audioCtx.createChannelSplitter(2);
+  let gainL = audioCtx.createGain();
+  let gainR = audioCtx.createGain();
   let merger = audioCtx.createChannelMerger(2);
 
-  osc.connect(splitter);
+  gainL.gain.value = 1;
+  gainR.gain.value = -1;
 
-  splitter.connect(merger, 0, 0);
-  splitter.connect(merger, 0, 1);
+  osc.connect(gainL);
+  osc.connect(gainR);
+
+  gainL.connect(merger, 0, 0);
+  gainR.connect(merger, 0, 1);
 
   merger.connect(audioCtx.destination);
 
@@ -169,6 +207,14 @@ function playPhase() {
   setTimeout(() => osc.stop(), 2000);
 }
 </script>
+
+<!-- WA FLOAT -->
+<a class="wa-float" 
+   href="https://wa.me/6287860026049?text=Halo%20TSP%20Audio%20saya%20mau%20konsultasi" 
+   target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
+  Chat Admin
+</a>
 
 </body>
 </html>
