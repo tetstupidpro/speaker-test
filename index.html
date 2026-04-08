@@ -149,7 +149,10 @@ function playTone(freq, pan=0) {
   setTimeout(() => osc.stop(), 1000);
 }
 
-function playStereo() { playTone(1000, 0); }
+function playStereo() {
+  let audio = new Audio('stereo.mp3');
+  audio.play();
+}
 function playBass() { playTone(60, 0); }
 function playTreble() { playTone(10000, 0); }
 
